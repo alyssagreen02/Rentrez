@@ -84,3 +84,48 @@ colnames(Tab)=c("Sequence ID", "GC Content")
 print(Tab)
 ```
 
+# Part II
+
+## Load Library
+```{r}
+library(annotate)
+```
+## Load sequence
+```{r}
+Seq=data.frame(Sequence="> Human isolate, unknown sequence
+GCCTGATGGAGGGGGATAACTACTGGAAACGGTAGCTAATACCGCATGAC
+CTCGCAAGAGCAAAGTGGGGGACCTTAGGGCCTCACGCCATCGGATGAAC
+CCAGATGGGATTAGCTAGTAGGTGGGGTAATGGCTCACCTAGGCGACGAT
+CCCTAGCTGGTCTGAGAGGATGACCAGCCACACTGGAACTGAGACACGGT
+CCAGACTCCTACGGGAGGCAGCAGTGGGGAATATTGCACAATGGGCGCAA")
+```
+
+```{r}
+Blast=blastSequences(paste(Seq$Sequence), as='data.frame', timeout = 500)
+```
+
+```{r}
+nrow(Blast)
+```
+
+```{r}
+head(Blast)
+```
+
+```{r}
+library(ggplot2)
+```
+
+## Report
+
+In our analysis, we searched for the closest matching DNA sequence on Genbank. The analyses found that the outlier sequence comes from *Yersinia pestis*, a zoonotic bacteria usually found in small mammals and their fleas (Plague, n.d.). The accuracy of this finding was tested by looking at Hsp score (Figure 1) and evalue (Figure 2) for each of the hits obtained. All Hsp scores are either 495 or 500, which are very high values, indicating that the hits are accurate. All the evalues are either 7.24e-121 or 1.7e-122, which are extremely small values, indicating that the hits are accurate. Because of the accuracy of the findings, the fact that the sequence comes from *Yersinia pestis* is very concerning. Infection by *Yersinia pestis* is known to cause the plague (Plague (yersinia pestis), 2022). The plague is a life-threatening condition that has historically caused widespread pandemics with high mortality (Plague, n.d.). The finding of the plague in a human sequence is particularly troubling as it has a case fatality ratio of 30% to 100% if left untreated (Plague, n.d.). Currently, up to 3000 cases of the plague are reported to the World Health Organization each year, and it must be closely monitored and the spread mitigated to prevent another pandemic (Plague (yersinia pestis), 2022).
+
+```{r}
+ggplot(aes(x=Hit_accession, y=Hsp_score), data=Blast)+geom_point()+theme_bw()+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+labs(x="Hit accession", y="Hsp score")
+```
+Figure 1: Hsp scores from Blast search. The Hsp scores are all either 495 or 500, which are very high values, indicating that the hits from the blast search are accurate.
+
+```{r}
+ggplot(aes(x=Hit_accession, y=Hsp_evalue), data=Blast)+geom_point()+theme_bw()+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+labs(x="Hit accession", y="evalue")
+```
+Figure 2: evalues from Blast search. The evalues are all either 7.24e-121 or 1.7e-122, which are extremely small values, indicating that the hits from the blast search are accurate.
